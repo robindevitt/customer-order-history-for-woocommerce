@@ -1,2 +1,1 @@
-# related-orders-for-woocommerce
-Related orders for WooCommerce
+# Related Customer Orders for WooCommerce
