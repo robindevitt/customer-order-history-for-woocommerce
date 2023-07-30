@@ -1,4 +1,4 @@
-.customer_related_orders {
+#customer_related_orders {
 	margin: 0;
 	overflow: auto;
 
@@ -55,5 +55,15 @@
 	thead th:last-of-type,
 	table td:last-of-type {
 		text-align: right;
+	}
+
+	.order-pagination {
+		padding-top: 12px;
+		padding-bottom: 2px;
+		text-align: right;
+
+		select {
+			margin-right: 10px;
+		}
 	}
 }
