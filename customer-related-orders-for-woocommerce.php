@@ -82,7 +82,6 @@ function related_customer_orders_meta_box( $post_type ) {
  * Add plugin related assets.
  */
 function related_customer_orders_assets() {
-	wp_enqueue_style( 'customer-related-orders-style', plugins_url( '/assets/css/customer_related_orders.min.css', __FILE__ ), array(), CUSTOMER_RELATED_ORDER_VERSION );
 	wp_enqueue_script( 'customer-related-orders-script', plugins_url( '/assets/js/customer_related_orders.js', __FILE__ ), array( 'jquery' ), CUSTOMER_RELATED_ORDER_VERSION, true );
 	wp_localize_script(
 		'customer-related-orders-script',

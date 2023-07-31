@@ -31,9 +31,9 @@ function customer_related_orders_meta_box_content( $post ) {
 
 	$order_html = '';
 
-	$order_html .= '<div id="customer_related_orders">';
+	$order_html .= '<div>';
 
-		$order_html .= '<table>';
+		$order_html .= '<table class="wp-list-table widefat fixed striped table-view-excerpt posts">';
 
 			$order_html .= '<thead>';
 
@@ -55,29 +55,34 @@ function customer_related_orders_meta_box_content( $post ) {
 			$order_html .= render_related_orders( $post->ID, $orders );
 
 			$order_html .= '</tbody>';
-		$order_html     .= '</table>';
+
+		$order_html .= '</table>';
 
 		// Output pagination links.
 	if ( $orders->max_num_pages > 0 ) {
-		$order_html .= '<div class="order-pagination">';
+		$order_html .= '<div class="order-pagination tablenav bottom">';
 
-			$order_html .= '<select id="related-order-pagination" data-email="' . esc_attr( $order->get_billing_email() ) . '" name="page">';
+			$order_html .= '<div class="alignright">';
 
-		for ( $i = 1; $i <= $orders->max_num_pages; $i++ ) {
+				$order_html .= '<select id="related-order-pagination" class="" data-email="' . esc_attr( $order->get_billing_email() ) . '" name="page">';
 
-			$order_html .= '<option value="' . esc_attr( $i - 1 ) . '">Page ' . $i . '</option>';
+					for ( $i = 1; $i <= $orders->max_num_pages; $i++ ) { // phpcs:ignore
 
-		}
+						$order_html .= '<option value="' . esc_attr( $i - 1 ) . '">' . esc_html__( 'Page', 'customer-related-orders-woocommerce' ) . ' ' . $i . '</option>';
 
-			$order_html .= '</select>';
+					} // phpcs:ignore
 
-			$order_html .= 'of ' . $orders->max_num_pages;
+				$order_html .= '</select>';
 
-		if ( isset( $orders->total ) ) {
-			$order_html .= ' | <span>Orders: ' . $orders->total;
-		}
+				$order_html .= ' of ' . $orders->max_num_pages;
 
-			$order_html .= '</div>'; // Close of class order-pagination.
+				if ( isset( $orders->total ) ) { // phpcs:ignore
+					$order_html .= '  |  <span> ' . esc_html__( 'Orders', 'customer-related-orders-woocommerce' ) . ': ' . $orders->total . '</span>';
+				} // phpcs:ignore
+
+			$order_html .= '</div>'; // Close of div alignright.
+
+		$order_html .= '</div>'; // Close of class order-pagination.
 	}
 
 	$order_html .= '</div>'; // Close of ID customer_related_orders.
@@ -85,13 +90,10 @@ function customer_related_orders_meta_box_content( $post ) {
 	echo wp_kses(
 		$order_html,
 		array(
-			'span'   => array(
-				'class' => true,
-			),
-			'div'    => array(
-				'id' => true,
-			),
+			'span'   => array(),
+			'div'    => array(),
 			'select' => array(
+				'class'      => true,
 				'id'         => true,
 				'name'       => true,
 				'data-email' => true,
@@ -99,7 +101,9 @@ function customer_related_orders_meta_box_content( $post ) {
 			'option' => array(
 				'value' => true,
 			),
-			'table'  => array(),
+			'table'  => array(
+				'class' => true,
+			),
 			'thead'  => array(),
 			'tr'     => array(),
 			'th'     => array(),
