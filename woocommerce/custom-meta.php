@@ -90,7 +90,8 @@ function customer_related_orders_meta_box_content( $post ) {
 	echo wp_kses(
 		$order_html,
 		array(
-			'span'   => array(),
+				'class' => true,
+			),
 			'div'    => array(),
 			'select' => array(
 				'class'      => true,
@@ -163,10 +164,9 @@ function ajax__related_order_for_customers() {
 					'span'   => array(
 						'class' => true,
 					),
-					'div'    => array(
-						'id' => true,
-					),
+					'div'    => array(),
 					'select' => array(
+						'class'      => true,
 						'id'         => true,
 						'name'       => true,
 						'data-email' => true,
@@ -174,7 +174,9 @@ function ajax__related_order_for_customers() {
 					'option' => array(
 						'value' => true,
 					),
-					'table'  => array(),
+					'table'  => array(
+						'class' => true,
+					),
 					'thead'  => array(),
 					'tr'     => array(),
 					'th'     => array(),
