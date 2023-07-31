@@ -93,7 +93,9 @@ function customer_related_orders_meta_box_content( $post ) {
 			'span'   => array(
 				'class' => true,
 			),
-			'div'    => array(),
+			'div'    => array(
+				'class' => true,
+			),
 			'select' => array(
 				'class'      => true,
 				'id'         => true,
@@ -165,7 +167,9 @@ function ajax__related_order_for_customers() {
 					'span'   => array(
 						'class' => true,
 					),
-					'div'    => array(),
+					'div'    => array(
+						'class' => true,
+					),
 					'select' => array(
 						'class'      => true,
 						'id'         => true,
