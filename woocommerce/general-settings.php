@@ -2,10 +2,10 @@
 /**
  * General Settings for the plugin - these are added to WooCommerce -> Settings -> General
  *
- * @package CustomerRelatedOrdersForWooCommerce
+ * @package CustomerOrderHistory
  */
 
-add_filter( 'woocommerce_general_settings', 'related_customer_orders_woocommerce_settings' );
+add_filter( 'woocommerce_general_settings', 'customer_order_history_woocommerce_settings' );
 
 /**
  * Setup our custom settings.
@@ -13,26 +13,26 @@ add_filter( 'woocommerce_general_settings', 'related_customer_orders_woocommerce
  * @param array $settings Current site settings as an array.
  * @return array Returns the merged settings.
  */
-function related_customer_orders_woocommerce_settings( $settings ) {
+function customer_order_history_woocommerce_settings( $settings ) {
 	$new_settings = array(
 		array(
-			'title' => __( 'Customer Related Orders', 'customer-related-orders-woocommerce' ),
+			'title' => __( 'Customer Order History', 'customer-order-history' ),
 			'type'  => 'title',
-			'id'    => 'customer_related_orders_settings',
+			'id'    => 'customer_order_history_settings',
 		),
 
 		array(
-			'title'    => __( 'Orders per page', 'customer-related-orders-woocommerce' ),
+			'title'    => __( 'Orders per page', 'customer-order-history' ),
 			'id'       => 'cro__pagination',
 			'default'  => '10',
 			'desc_tip' => true,
-			'desc'     => __( 'This sets the number of orders to display in the customer related orders block. Use "-1" to show all orders related to a customer.', 'customer-related-orders-woocommerce' ),
+			'desc'     => __( 'This sets the number of orders to display in the Customer Order History block. Use "-1" to show all orders related to a customer.', 'customer-order-history' ),
 			'type'     => 'number',
 		),
 
 		array(
 			'type' => 'sectionend',
-			'id'   => 'customer_related_orders_settings',
+			'id'   => 'customer_order_history_settings',
 		),
 
 	);
