@@ -90,6 +90,7 @@ function customer_related_orders_meta_box_content( $post ) {
 	echo wp_kses(
 		$order_html,
 		array(
+			'span'   => array(
 				'class' => true,
 			),
 			'div'    => array(),
