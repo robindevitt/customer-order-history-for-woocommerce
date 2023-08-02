@@ -69,7 +69,7 @@ function customer_related_orders_meta_box( $post_type ) {
 	if ( in_array( $post_type, $post_types, true ) ) {
 		add_meta_box(
 			'customer_related_orders_meta_box',
-			__( 'Customer Order History', 'customer-related-orders' ),
+			__( 'Customer Related Orders', 'customer-related-orders' ),
 			'customer_related_orders_meta_box_content',
 			$post_type,
 			'advanced',

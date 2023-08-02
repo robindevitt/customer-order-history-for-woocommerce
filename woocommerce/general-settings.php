@@ -16,7 +16,7 @@ add_filter( 'woocommerce_general_settings', 'customer_related_orders_woocommerce
 function customer_related_orders_woocommerce_settings( $settings ) {
 	$new_settings = array(
 		array(
-			'title' => __( 'Customer Order History', 'customer-related-orders' ),
+			'title' => __( 'Customer Related Orders', 'customer-related-orders' ),
 			'type'  => 'title',
 			'id'    => 'customer_related_orders_settings',
 		),
@@ -26,7 +26,7 @@ function customer_related_orders_woocommerce_settings( $settings ) {
 			'id'       => 'cro__pagination',
 			'default'  => '10',
 			'desc_tip' => true,
-			'desc'     => __( 'This sets the number of orders to display in the Customer Order History block. Use "-1" to show all orders related to a customer.', 'customer-related-orders' ),
+			'desc'     => __( 'This sets the number of orders to display in the Customer Related Orders block. Use "-1" to show all orders related to a customer.', 'customer-related-orders' ),
 			'type'     => 'number',
 		),
 
