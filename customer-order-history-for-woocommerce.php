@@ -22,7 +22,7 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'CUSTOMER_ORDER_HISTORY_VERSION', '1.0.0' );
 
 /**
- * Check if WooCommerce is active
+ * Check if WooCommerce is active.
  */
 if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true )
 	&& ! array_key_exists( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_site_option( 'active_sitewide_plugins', array() ) ) )
