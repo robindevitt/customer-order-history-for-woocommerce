@@ -156,8 +156,8 @@ function customer_related_orders_ajax_request() {
 	if ( isset( $_POST['nonce'] ) || wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'customer-related-orders' ) ) {
 		if ( isset( $_POST['action'] ) && 'customer_related_orders' === $_POST['action'] && ! empty( $_POST['data'] ) && isset( $_POST['data']['email'] ) ) {
 
-			$post_email   = isset( $_POST['data']['email'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['email'] ) ) : '';
-			$post_page    = isset( $_POST['data']['page'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['page'] ) ) : '';
+			$post_email   = isset( $_POST['data']['email'] ) ? sanitize_email( wp_unslash( $_POST['data']['email'] ) ) : '';
+			$post_page    = isset( $_POST['data']['page'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['page'] ) ) : 1;
 			$post_exclude = isset( $_POST['data']['exclude'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['exclude'] ) ) : '';
 
 			$data = customer_related_orders_retrieve( true, $post_email, $post_page, $post_exclude );
