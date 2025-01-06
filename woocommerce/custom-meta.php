@@ -48,7 +48,7 @@ function customer_related_orders_meta_box_content( $order ) {
 			$order_html .= '<tbody>';
 
 			// Loop through the orders related to the customer.
-			$order_html .= customer_related_orders_render( $order->get_id(), $orders );
+			$order_html .= customer_related_orders_render_html( $orders );
 
 			$order_html .= '</tbody>';
 
@@ -58,74 +58,30 @@ function customer_related_orders_meta_box_content( $order ) {
 		if ( $orders->max_num_pages > 0 ) { // phpcs:ignore
 			$order_html .= '<div class="order-pagination tablenav bottom">';
 
-				$order_html .= '<div class="alignright">';
+			$order_html .= '<div class="alignright">';
 
-					$order_html .= '<select id="customer-related-orders-pagination" class="" data-email="' . esc_attr( $order->get_billing_email() ) . '" data-exclude="' . esc_attr( $order->get_id() ) . '" name="page">';
+			$order_html .= '<select id="customer-related-orders-pagination" class="" data-email="' . sanitize_email( esc_attr( $order->get_billing_email() ) ) . '" data-exclude="' . esc_attr( $order->get_id() ) . '" name="page">';
 
-						for ( $i = 1; $i <= $orders->max_num_pages; $i++ ) { // phpcs:ignore
-							$order_html .= '<option value="' . esc_attr( $i - 1 ) . '">' . esc_html__( 'Page', 'customer-related-orders' ) . ' ' . $i . '</option>';
-						} // phpcs:ignore
+			for ( $i = 1; $i <= $orders->max_num_pages; $i++ ) { // phpcs:ignore
+				$order_html .= '<option value="' . esc_attr( $i - 1 ) . '">' . esc_html__( 'Page', 'customer-related-orders' ) . ' ' . $i . '</option>';
+				} // phpcs:ignore
 
-					$order_html .= '</select>';
+			$order_html .= '</select>';
 
-					$order_html .= ' of ' . $orders->max_num_pages;
+			$order_html .= ' of ' . $orders->max_num_pages;
 
-					if ( isset( $orders->total ) ) { // phpcs:ignore
-						$order_html .= '  |  <span> ' . esc_html__( 'Related Orders', 'customer-related-orders' ) . ': ' . $orders->total . '</span>';
-					} // phpcs:ignore
+			if ( isset( $orders->total ) ) { // phpcs:ignore
+				$order_html .= '  |  <span> ' . esc_html__( 'Related Orders', 'customer-related-orders' ) . ': ' . $orders->total . '</span>';
+				} // phpcs:ignore
 
-				$order_html .= '</div>'; // Close of div alignright.
+			$order_html .= '</div>'; // Close of div alignright.
 
 			$order_html .= '</div>'; // Close of class order-pagination.
 		} // phpcs:ignore
 
 	$order_html .= '</div>'; // Close of ID customer_related_orders.
 
-	echo wp_kses(
-		$order_html,
-		array(
-			'span'   => array(
-				'class' => true,
-			),
-			'div'    => array(
-				'class' => true,
-			),
-			'select' => array(
-				'class'        => true,
-				'id'           => true,
-				'name'         => true,
-				'data-email'   => true,
-				'data-exclude' => true,
-			),
-			'option' => array(
-				'value' => true,
-			),
-			'table'  => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'thead'  => array(),
-			'tr'     => array(),
-			'th'     => array(),
-			'td'     => array(
-				'class'   => true,
-				'colspan' => true,
-			),
-			'del'    => array(),
-			'a'      => array(
-				'href'  => true,
-				'title' => true,
-			),
-			'mark'   => array(
-				'class' => true,
-			),
-			'input'  => array(
-				'type',
-				'name',
-				'value',
-			),
-		)
-	);
+	echo wp_kses( $order_html, customer_related_orders_allowed_html_tags() );
 }
 
 /**
@@ -160,51 +116,9 @@ function customer_related_orders_ajax_request() {
 			$post_page    = isset( $_POST['data']['page'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['page'] ) ) : 1;
 			$post_exclude = isset( $_POST['data']['exclude'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['exclude'] ) ) : '';
 
-			$data = customer_related_orders_retrieve( true, $post_email, $post_page, $post_exclude );
-			$data = customer_related_orders_render( get_queried_object_id(), $data );
-			echo wp_kses(
-				$data,
-				array(
-					'span'   => array(
-						'class' => true,
-					),
-					'div'    => array(
-						'class' => true,
-					),
-					'select' => array(
-						'class'        => true,
-						'id'           => true,
-						'name'         => true,
-						'data-email'   => true,
-						'data-exclude' => true,
-					),
-					'option' => array(
-						'value' => true,
-					),
-					'table'  => array(
-						'class' => true,
-					),
-					'thead'  => array(),
-					'tr'     => array(),
-					'th'     => array(),
-					'td'     => array(
-						'class'   => true,
-						'colspan' => true,
-					),
-					'a'      => array(
-						'href'  => true,
-						'title' => true,
-					),
-					'mark'   => array(
-						'class' => true,
-					),
-					'input'  => array(
-						'type',
-						'name',
-						'value',
-					),
-				)
-			);
+			$orders = customer_related_orders_retrieve( true, $post_email, $post_page, $post_exclude );
+			$html   = customer_related_orders_render_html( $orders );
+			echo wp_kses( $html, customer_related_orders_allowed_html_tags() );
 		}
 	}
 	wp_die();
@@ -220,13 +134,16 @@ function customer_related_orders_ajax_request() {
  */
 function customer_related_orders_retrieve( $allorders, $email, $offset, $exclude ) {
 	// Get the limit / orders per page.
-	$limit  = customer_related_orders_pagination();
+	$limit        = customer_related_orders_pagination();
+	$offset       = isset( $offset ) && is_numeric( $offset ) ? (int) $offset : 0;
+	$offset_value = ( $offset > 0 ? ( $offset * $limit ) : 0 );
+
 	$orders = wc_get_orders(
 		array(
 			'billing_email' => $email,
 			'limit'         => $limit,
 			'paginate'      => true,
-			'offset'        => ( $offset > 0 ? ( $offset * $limit ) : 0 ),
+			'offset'        => $offset_value,
 			'exclude'       => array( $exclude ),
 		)
 	);
@@ -237,12 +154,11 @@ function customer_related_orders_retrieve( $allorders, $email, $offset, $exclude
 }
 
 /**
- * Customer related orders render.
+ * Customer related orders render html.
  *
- * @param int    $currentorder Current order number.
  * @param object $orders Object of orders.
  */
-function customer_related_orders_render( $currentorder, $orders ) {
+function customer_related_orders_render_html( $orders ) {
 	$related_orders_html = '';
 	foreach ( $orders->orders as $order ) {
 		$related_orders_html     .= '<tr>';
@@ -253,4 +169,52 @@ function customer_related_orders_render( $currentorder, $orders ) {
 		$related_orders_html     .= '</tr>';
 	}
 	return $related_orders_html;
+}
+
+/**
+ * Setup allowed HTML tags for wp_kses.
+ */
+function customer_related_orders_allowed_html_tags() {
+	return array(
+		'span'   => array(
+			'class' => true,
+		),
+		'div'    => array(
+			'class' => true,
+		),
+		'select' => array(
+			'class'        => true,
+			'id'           => true,
+			'name'         => true,
+			'data-email'   => true,
+			'data-exclude' => true,
+		),
+		'option' => array(
+			'value' => true,
+		),
+		'table'  => array(
+			'id'    => true,
+			'class' => true,
+		),
+		'thead'  => array(),
+		'tr'     => array(),
+		'th'     => array(),
+		'td'     => array(
+			'class'   => true,
+			'colspan' => true,
+		),
+		'del'    => array(),
+		'a'      => array(
+			'href'  => true,
+			'title' => true,
+		),
+		'mark'   => array(
+			'class' => true,
+		),
+		'input'  => array(
+			'type',
+			'name',
+			'value',
+		),
+	);
 }

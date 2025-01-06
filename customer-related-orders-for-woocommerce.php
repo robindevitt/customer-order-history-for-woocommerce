@@ -57,8 +57,15 @@ function customer_related_orders_meta_box( $post_type ) {
 
 /**
  * Add plugin related assets.
+ *
+ * @param string $hook Hook suffix for the current admin page.
  */
-function customer_related_orders_assets() {
+function customer_related_orders_assets( $hook ) {
+
+	if ( ! in_array( $hook, array( 'woocommerce_page_wc-orders' ), true ) ) {
+		return;
+	}
+
 	wp_enqueue_script( 'customer-related-orders', plugins_url( '/assets/js/customer_related_orders.js', __FILE__ ), array( 'jquery' ), CUSTOMER_RELATED_ORDERS_VERSION, true );
 	wp_localize_script(
 		'customer-related-orders',
