@@ -16,14 +16,14 @@ add_filter( 'woocommerce_general_settings', 'customer_related_orders_woocommerce
 function customer_related_orders_woocommerce_settings( $settings ) {
 	$new_settings = array(
 		array(
-			'title' => __( 'Customer Related Orders', 'customer-related-orders' ),
+			'title' => __( 'Customer Related Order Settings', 'customer-related-orders' ),
 			'type'  => 'title',
 			'id'    => 'customer_related_orders_settings',
 		),
 
 		array(
-			'title'    => __( 'Orders per page', 'customer-related-orders' ),
-			'id'       => 'cro__pagination',
+			'title'    => __( 'Related Orders per page', 'customer-related-orders' ),
+			'id'       => 'customer_related_pagination',
 			'default'  => '10',
 			'desc_tip' => true,
 			'desc'     => __( 'This sets the number of orders to display in the Customer Related Orders block. Use "-1" to show all orders related to a customer.', 'customer-related-orders' ),
@@ -34,8 +34,6 @@ function customer_related_orders_woocommerce_settings( $settings ) {
 			'type' => 'sectionend',
 			'id'   => 'customer_related_orders_settings',
 		),
-
 	);
-
 	return array_merge( array_slice( $settings, 0, 50 ), $new_settings, array_slice( $settings, 50 ) );
 }
