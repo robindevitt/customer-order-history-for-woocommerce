@@ -10,6 +10,7 @@
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       customer-related-orders
  * Domain Path:       /languages
+ * Requires Plugins:  woocommerce
  *
  * @package CustomerRelatedOrders
  */
@@ -20,33 +21,6 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'CUSTOMER_RELATED_ORDERS_VERSION', '1.0.0' );
-
-/**
- * Check if WooCommerce is active.
- */
-if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true )
-	&& ! array_key_exists( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_site_option( 'active_sitewide_plugins', array() ) ) )
-) {
-	require_once ABSPATH . 'wp-admin/includes/plugin.php';
-	add_action( 'admin_notices', 'cro__woocommerce_disabled_notice' );
-	return;
-}
-
-/**
- * Error message to display if Woocommerce isn't active.
- */
-function cro__woocommerce_disabled_notice() {
-	echo '<div class="error"><p>';
-		echo sprintf(
-			/* translators: %s: Download link for WooCommerce */
-			esc_html__(
-				'<strong>Customer Related Orders for WooCommerce</strong> requires WooCommerce to be installed and actived. Please activate WooCommerce and if you need to download WooCommerce, you can %s.',
-				'customer-related-orders'
-			),
-			'<a href="https://wordpress.org/plugins/woocommerce">' . esc_html__( 'download it here', 'customer-related-orders' ) . '</a>'
-		);
-	echo '</p></div>';
-}
 
 /**
  * Ensure the meta boxes are only called in the admin areas.
