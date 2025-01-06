@@ -26,6 +26,7 @@ define( 'CUSTOMER_RELATED_ORDERS_VERSION', '1.0.0' );
  * Ensure the meta boxes are only called in the admin areas.
  */
 if ( is_admin() ) {
+	add_action( 'add_meta_boxes', 'customer_related_orders_meta_box' );
 	add_action( 'admin_enqueue_scripts', 'customer_related_orders_assets' );
 	require_once __DIR__ . '/woocommerce/custom-meta.php';
 	require_once __DIR__ . '/woocommerce/general-settings.php';
@@ -38,18 +39,20 @@ if ( is_admin() ) {
  */
 function customer_related_orders_meta_box( $post_type ) {
 	// Limit meta box to certain post types.
-	$post_types = array( 'shop_order' );
+	$post_types = array( 'shop_order', 'shop_order_placehold', 'woocommerce_page_wc-orders' );
 
-	if ( in_array( $post_type, $post_types, true ) ) {
-		add_meta_box(
-			'customer_related_orders_meta_box',
-			__( 'Customer Related Orders', 'customer-related-orders' ),
-			'customer_related_orders_meta_box_content',
-			$post_type,
-			'advanced',
-			'high'
-		);
+	if ( ! in_array( $post_type, $post_types, true ) ) {
+		return;
 	}
+
+	add_meta_box(
+		'customer_related_orders_meta_box',
+		__( 'Customer Related Orders', 'customer-related-orders' ),
+		'customer_related_orders_meta_box_content',
+		$post_type,
+		'advanced',
+		'high'
+	);
 }
 
 /**
