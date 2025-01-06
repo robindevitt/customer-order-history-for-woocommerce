@@ -21,13 +21,13 @@ add_action( 'wp_ajax_nopriv_customer_related_orders', 'customer_related_orders_a
 function customer_related_orders_meta_box_content( $order ) {
 
 	// Get orders from people named John that were paid in the year 2016.
-	$orders = customer_related_orders_retrieve( true, $order->get_billing_email(), 0, $order->get_id() );
+	$orders = customer_related_orders_retrieve( true, $order->get_billing_email(), 0 );
 
 	$order_count = ( isset( $orders->total ) ? $orders->total : count( $orders ) );
 
 	// When there are no related orders, show the message and return early.
 	if ( 0 === $order_count ) {
-		echo '<p>' . esc_html__( 'The billing email for this order, has no related orders.', 'customer-related-orders' ) . '</p>';
+		echo '<p>' . esc_html__( 'The billing email for this order, has no related orders.', 'customer-related-orders-for-woocommerce' ) . '</p>';
 		return;
 	}
 
@@ -41,10 +41,10 @@ function customer_related_orders_meta_box_content( $order ) {
 
 				$order_html .= '<tr>';
 
-					$order_html .= '<th>' . esc_html__( 'Order', 'customer-related-orders' ) . ' </th>';
-					$order_html .= '<th>' . esc_html__( 'Date', 'customer-related-orders' ) . ' </th>';
-					$order_html .= '<th>' . esc_html__( 'Status', 'customer-related-orders' ) . ' </th>';
-					$order_html .= '<th>' . esc_html__( 'Total', 'customer-related-orders' ) . ' </th>';
+					$order_html .= '<th>' . esc_html__( 'Order', 'customer-related-orders-for-woocommerce' ) . ' </th>';
+					$order_html .= '<th>' . esc_html__( 'Date', 'customer-related-orders-for-woocommerce' ) . ' </th>';
+					$order_html .= '<th>' . esc_html__( 'Status', 'customer-related-orders-for-woocommerce' ) . ' </th>';
+					$order_html .= '<th>' . esc_html__( 'Total', 'customer-related-orders-for-woocommerce' ) . ' </th>';
 
 				$order_html .= '</tr>';
 
@@ -53,7 +53,7 @@ function customer_related_orders_meta_box_content( $order ) {
 			$order_html .= '<tbody>';
 
 			// Loop through the orders related to the customer.
-			$order_html .= customer_related_orders_render_html( $orders );
+			$order_html .= customer_related_orders_render_html( $orders, $order->get_id() );
 
 			$order_html .= '</tbody>';
 
@@ -65,10 +65,10 @@ function customer_related_orders_meta_box_content( $order ) {
 
 			$order_html .= '<div class="alignright">';
 
-			$order_html .= '<select id="customer-related-orders-pagination" class="" data-email="' . sanitize_email( esc_attr( $order->get_billing_email() ) ) . '" data-exclude="' . esc_attr( $order->get_id() ) . '" name="page">';
+			$order_html .= '<select id="customer-related-orders-pagination" class="" data-email="' . sanitize_email( esc_attr( $order->get_billing_email() ) ) . '" data-current="' . esc_attr( $order->get_id() ) . '" name="page">';
 
 			for ( $i = 1; $i <= $orders->max_num_pages; $i++ ) { // phpcs:ignore
-				$order_html .= '<option value="' . esc_attr( $i - 1 ) . '">' . esc_html__( 'Page', 'customer-related-orders' ) . ' ' . $i . '</option>';
+				$order_html .= '<option value="' . esc_attr( $i - 1 ) . '">' . esc_html__( 'Page', 'customer-related-orders-for-woocommerce' ) . ' ' . $i . '</option>';
 				} // phpcs:ignore
 
 			$order_html .= '</select>';
@@ -76,7 +76,7 @@ function customer_related_orders_meta_box_content( $order ) {
 			$order_html .= ' of ' . $orders->max_num_pages;
 
 			if ( isset( $orders->total ) ) { // phpcs:ignore
-				$order_html .= '  |  <span> ' . esc_html__( 'Related Orders', 'customer-related-orders' ) . ': ' . $orders->total . '</span>';
+				$order_html .= '  |  <span> ' . esc_html__( 'Related Orders', 'customer-related-orders-for-woocommerce' ) . ': ' . $orders->total . '</span>';
 				} // phpcs:ignore
 
 			$order_html .= '</div>'; // Close of div alignright.
@@ -117,12 +117,12 @@ function customer_related_orders_ajax_request() {
 	if ( isset( $_POST['nonce'] ) || wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'customer-related-orders' ) ) {
 		if ( isset( $_POST['action'] ) && 'customer_related_orders' === $_POST['action'] && ! empty( $_POST['data'] ) && isset( $_POST['data']['email'] ) ) {
 
-			$post_email   = isset( $_POST['data']['email'] ) ? sanitize_email( wp_unslash( $_POST['data']['email'] ) ) : '';
-			$post_page    = isset( $_POST['data']['page'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['page'] ) ) : 1;
-			$post_exclude = isset( $_POST['data']['exclude'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['exclude'] ) ) : '';
+			$post_email    = isset( $_POST['data']['email'] ) ? sanitize_email( wp_unslash( $_POST['data']['email'] ) ) : '';
+			$post_page     = isset( $_POST['data']['page'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['page'] ) ) : 1;
+			$current_order = isset( $_POST['data']['current'] ) ? sanitize_text_field( wp_unslash( $_POST['data']['current'] ) ) : '';
 
-			$orders = customer_related_orders_retrieve( true, $post_email, $post_page, $post_exclude );
-			$html   = customer_related_orders_render_html( $orders );
+			$orders = customer_related_orders_retrieve( true, $post_email, $post_page );
+			$html   = customer_related_orders_render_html( $orders, $current_order );
 			echo wp_kses( $html, customer_related_orders_allowed_html_tags() );
 		}
 	}
@@ -135,9 +135,8 @@ function customer_related_orders_ajax_request() {
  * @param bool   $allorders True for complete object false for orders only.
  * @param string $email Email address to search..
  * @param int    $offset Set the offset for the order count.
- * @param int    $exclude Exclude the order id.
  */
-function customer_related_orders_retrieve( $allorders, $email, $offset, $exclude ) {
+function customer_related_orders_retrieve( $allorders, $email, $offset ) {
 	// Get the limit / orders per page.
 	$limit        = customer_related_orders_pagination();
 	$offset       = isset( $offset ) && is_numeric( $offset ) ? (int) $offset : 0;
@@ -149,7 +148,6 @@ function customer_related_orders_retrieve( $allorders, $email, $offset, $exclude
 			'limit'         => $limit,
 			'paginate'      => true,
 			'offset'        => $offset_value,
-			'exclude'       => array( $exclude ),
 		)
 	);
 	if ( $allorders ) {
@@ -162,12 +160,17 @@ function customer_related_orders_retrieve( $allorders, $email, $offset, $exclude
  * Customer related orders render html.
  *
  * @param object $orders Object of orders.
+ * @param int    $current_order Current order ID.
  */
-function customer_related_orders_render_html( $orders ) {
+function customer_related_orders_render_html( $orders, $current_order ) {
 	$related_orders_html = '';
 	foreach ( $orders->orders as $order ) {
-		$related_orders_html     .= '<tr>';
-			$related_orders_html .= '<td><a title="' . esc_html__( 'View order', 'customer-related-orders' ) . '" href="' . $order->get_edit_order_url() . '">View Order #' . $order->get_id() . '</a></td>';
+		$related_orders_html .= '<tr>';
+			if ( $current_order === $order->get_id() ) { // phpcs:ignore
+				$related_orders_html .= '<td>' . esc_html__( 'Current order', 'customer-related-orders-for-woocommerce' ) . '</td>';
+			} else { // phpcs:ignore
+				$related_orders_html .= '<td><a title="' . esc_html__( 'View order', 'customer-related-orders-for-woocommerce' ) . '" href="' . $order->get_edit_order_url() . '">' . esc_html__( 'View order', 'customer-related-orders-for-woocommerce' ) . ' #' . $order->get_id() . '</a></td>';
+			} // phpcs:ignore
 			$related_orders_html .= '<td>' . $order->get_date_created()->format( 'j F, Y' ) . '</td>';
 			$related_orders_html .= '<td><mark class="order-status status-' . esc_attr( $order->get_status() ) . '"><span>' . wc_get_order_status_name( $order->get_status() ) . '</span></mark></td>';
 			$related_orders_html .= '<td>' . $order->get_formatted_order_total() . '</td>';
@@ -192,7 +195,7 @@ function customer_related_orders_allowed_html_tags() {
 			'id'           => true,
 			'name'         => true,
 			'data-email'   => true,
-			'data-exclude' => true,
+			'data-current' => true,
 		),
 		'option' => array(
 			'value' => true,

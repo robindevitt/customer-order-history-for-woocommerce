@@ -8,8 +8,8 @@
  * Author URI:        https://robindevitt.co.za/
  * License:           GPL v3 or later
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain:       customer-related-orders
- * Domain Path:       /languages
+ * Text Domain:       customer-related-orders-for-woocommerce
+ * Domain Path:       /languages/
  * Requires Plugins:  woocommerce
  *
  * @package CustomerRelatedOrders
@@ -47,7 +47,7 @@ function customer_related_orders_meta_box( $post_type ) {
 
 	add_meta_box(
 		'customer_related_orders_meta_box',
-		__( 'Customer Related Orders', 'customer-related-orders' ),
+		__( 'Customer Related Orders', 'customer-related-orders-for-woocommerce' ),
 		'customer_related_orders_meta_box_content',
 		$post_type,
 		'advanced',
@@ -73,7 +73,7 @@ function customer_related_orders_assets( $hook ) {
 		array(
 			'ajax_url'      => admin_url( 'admin-ajax.php' ),
 			'security'      => wp_create_nonce( 'customer-related-orders' ),
-			'fetching_text' => __( 'Fetching orders...', 'customer-related-orders' ),
+			'fetching_text' => __( 'Fetching orders...', 'customer-related-orders-for-woocommerce' ),
 		)
 	);
 }

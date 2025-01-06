@@ -1,12 +1,13 @@
 === Customer Related Orders for WooCommerce ===
 Contributors: robinrsa
-Tags: woocommerce, woo, orders, order history, ecommerce, reports, reporting
+Tags: woocommerce, orders, order history, ecommerce, report
 Version: 1.0.0
-Tested up to: 6.2.2
+Tested up to: 6.7
 Stable tag: 1.0.0
 Requires PHP: 7.3
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Designed to streamline the process of accessing your customer's order history.
 
 == Description ==
 Designed to streamline the process of accessing your customer's order history.
