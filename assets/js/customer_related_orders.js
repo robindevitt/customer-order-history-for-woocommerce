@@ -2,6 +2,7 @@ jQuery('#customer-related-orders-pagination').on('change', function (e) {
 	var pagination = {
 		email: jQuery(this).attr('data-email'),
 		page: jQuery(this).val(),
+		exclude: jQuery(this).attr('data-exclude'),
 	};
 
 	jQuery('#customer_related_orders tbody').empty();
