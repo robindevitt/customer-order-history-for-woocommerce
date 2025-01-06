@@ -5,6 +5,11 @@
  * @package CustomerRelatedOrders
  */
 
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 add_filter( 'woocommerce_general_settings', 'customer_related_orders_woocommerce_settings' );
 
 /**

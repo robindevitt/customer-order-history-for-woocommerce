@@ -5,6 +5,11 @@
  * @package CustomerRelatedOrders
  */
 
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
 add_action( 'wp_ajax_customer_related_orders', 'customer_related_orders_ajax_request' );
 add_action( 'wp_ajax_nopriv_customer_related_orders', 'customer_related_orders_ajax_request' );
 
