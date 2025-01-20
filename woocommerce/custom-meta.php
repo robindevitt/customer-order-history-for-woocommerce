@@ -16,11 +16,14 @@ add_action( 'wp_ajax_nopriv_customer_related_orders', 'customer_related_orders_a
 /**
  * Render Meta Box content.
  *
- * @param WP_Post $order The order object.
+ * @param WP_Post $post The post object.
  */
-function customer_related_orders_meta_box_content( $order ) {
+function customer_related_orders_meta_box_content( $post ) {
 
-	// Get orders from people named John that were paid in the year 2016.
+	// Get the order object.
+	$order = wc_get_order( $post->ID );
+
+	// Get orders.
 	$orders = customer_related_orders_retrieve( true, $order->get_billing_email(), 0 );
 
 	$order_count = ( isset( $orders->total ) ? $orders->total : count( $orders ) );
